@@ -1,17 +1,16 @@
 import { ButtonHTMLAttributes, FC } from "react";
 import { ColorRing } from "react-loader-spinner";
 
-
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   showCheckmark?: boolean;
+  text: string;
 }
 
-const Button: FC<ButtonProps> = ({ isLoading, showCheckmark }) => {
+const Button: FC<ButtonProps> = ({ isLoading, showCheckmark, text }) => {
   return (
     <button
       className="mt-2 text-center  relative inline-block  text-lg group w-full transition-all duration-1000 "
-      //   onClick={onCreateAccount}
       disabled={isLoading}
     >
       <span
@@ -31,7 +30,7 @@ const Button: FC<ButtonProps> = ({ isLoading, showCheckmark }) => {
               (isLoading || showCheckmark) && "-ml-6"
             }`}
           >
-            CREATE ACCOUNT
+            {text}
           </span>
           {showCheckmark && (
             <span className="relative">
