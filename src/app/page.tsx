@@ -7,9 +7,14 @@ import { useRouter } from "next/navigation";
 
 export default function Home() {
   const session = useSession();
-  console.log(session.data);
+  // console.log(session.data?.user);
 
   if (!session) return useRouter().push("/auth/login");
 
-  return <main>Home</main>;
+  return (
+    <main>
+      {JSON.stringify(session.data)}
+      {/* {JSON.stringify(session.data)} */}
+    </main>
+  );
 }

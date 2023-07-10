@@ -5,12 +5,18 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   showCheckmark?: boolean;
   text: string;
+  children?: React.ReactNode;
 }
 
-const Button: FC<ButtonProps> = ({ isLoading, showCheckmark, text }) => {
+const Button: FC<ButtonProps> = ({
+  isLoading,
+  showCheckmark,
+  text,
+  children,
+}) => {
   return (
     <button
-      className="mt-2 text-center  relative inline-block  text-lg group w-full transition-all duration-1000 "
+      className="mt-2 text-center  relative inline-block  text-lg group  transition-all duration-1000 w-full"
       disabled={isLoading}
     >
       <span
@@ -20,16 +26,17 @@ const Button: FC<ButtonProps> = ({ isLoading, showCheckmark, text }) => {
       >
         <span className="absolute inset-0 w-full h-full px-5 py-3 rounded-lg bg-blue-500"></span>
         <span
-          className={`absolute left-0 w-full h-[450px] transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-[#6B4892] group-hover:-rotate-180 ${
+          className={`absolute left-0 w-full h-[2000px] transition-all duration-300 origin-top-right -rotate-90 -translate-x-full translate-y-12 bg-[#6B4892] group-hover:-rotate-180 ${
             (isLoading || showCheckmark) && "-rotate-180"
           } ease`}
         ></span>
         <span className=" relative flex flex-row justify-center transition-all duration-1000 items-center  ">
           <span
-            className={`transition-all duration-300 ${
+            className={`transition-all duration-300 flex ${
               (isLoading || showCheckmark) && "-ml-6"
             }`}
           >
+            {children}
             {text}
           </span>
           {showCheckmark && (

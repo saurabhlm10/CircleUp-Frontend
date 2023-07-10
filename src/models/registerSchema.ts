@@ -12,10 +12,7 @@ const registerSchema = z
       .string()
       .min(8, { message: "Password Should Be At Least 8 Characters" })
       .max(20, { message: "Password Should Be At Most 20 Characters" }),
-    confirmPassword: z
-      .string()
-      .min(8, { message: "Password Should Be At Least 8 Characters" })
-      .max(20, { message: "Password Should Be At Most 20 Characters" }),
+    confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords Should Match",

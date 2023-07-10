@@ -2,8 +2,32 @@ import axiosInstance from "@/axios";
 import { AxiosError } from "axios";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import clientPromise from "../../../../lib/mongodb";
+import { MongoClient } from "mongodb";
+import { Adapter } from "next-auth/adapters";
+import axiosInstanceBackend from "@/axios";
+import { GoogleProfile } from "next-auth/providers/google";
+
+const getGoogleCredentials = () => {
+  const clientId = process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+
+  if (!clientId || clientId.length === 0) {
+    throw new Error("Missing GOOGLE_CLIENT_ID");
+  }
+  if (!clientSecret || clientSecret.length === 0) {
+    throw new Error("Missing GOOGLE_CLIENT_SECRET");
+  }
+
+  return { clientId, clientSecret };
+};
+
+const adapter = MongoDBAdapter(clientPromise) as Adapter | undefined;
 
 const handler = NextAuth({
+  adapter,
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
@@ -23,11 +47,14 @@ const handler = NextAuth({
       async authorize(credentials, req) {
         try {
           // Add logic here to look up the user from the credentials supplied
-          const res = await axiosInstance.post("/auth/login", credentials);
+          const res = await axiosInstanceBackend.post(
+            "/auth/login",
+            credentials
+          );
 
           if (res.status === 200) {
             // Any object returned will be saved in `user` property of the JWT
-            return res.data;
+            return res.data.user.email;
           } else {
             // If you return null then an error will be displayed advising the user to check their details.
             // throw new Error('Wrong email or password');
@@ -40,20 +67,45 @@ const handler = NextAuth({
         }
       },
     }),
+    GoogleProvider({
+      profile(profile: GoogleProfile) {
+        return {
+          username: profile.username,
+          id: profile.name,
+          followers: [],
+          following: [],
+        };
+      },
+      clientId: getGoogleCredentials().clientId,
+      clientSecret: getGoogleCredentials().clientSecret,
+    }),
   ],
   pages: {
     signIn: "/auth/login",
   },
   callbacks: {
     async jwt({ token, user }) {
-        // console.log("TOKEN", token);
-        console.log("USER", user);
-      return { ...token, ...user };
+      let newUser;
+      try {
+        newUser = await axiosInstanceBackend.get(
+          `/profile/getProfileByEmail/${user}`
+        );
+
+        const userData = newUser.data.user as UserModelResponse;
+
+        return { ...token, ...userData };
+      } catch (error) {
+        console.log(error);
+        return token;
+      }
     },
     async session({ session, token }) {
-      //   console.log("SESSION TOKEN", token);
+      console.log("PROVIDER", session);
       session.user = token;
       return session;
+    },
+    async redirect() {
+      return "/";
     },
   },
 });
