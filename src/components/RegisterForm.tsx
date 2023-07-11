@@ -42,25 +42,20 @@ const RegisterForm = () => {
   const onCreateAccount = async (data: RegisterFormData) => {
     try {
       setIsLoading(true);
+      data.username = data.username.toLowerCase();
       const response = await axiosInstanceBackend.post("/auth/register", data);
 
       await signIn<"credentials">("credentials", {
         username: data.username,
         password: data.password,
-      }).then((res) => {
-        if (res?.ok) {
-          setUsername("");
-          setEmail("");
-          setPassword("");
-          setConfirmPassword("");
-          toast.success("Correct2");
-        } else {
-          return toast.error(res?.error as string);
-        }
       });
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(error.response?.data?.message);
+      }
+
+      else if(error instanceof Error){
+        toast.error(error.message);
       }
     } finally {
       setIsLoading(false);
@@ -180,8 +175,7 @@ const RegisterForm = () => {
               <label
                 htmlFor="passwordFormControlInput"
                 className={` text-[#4CADDA] pointer-events-none absolute top-2 left-3 p-1 leading-3	  mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none  peer-focus:text-[#4CADDA] ${
-                  password &&
-                  "-translate-y-[0.9rem] scale-[0.8] text-[#4CADDA]"
+                  password && "-translate-y-[0.9rem] scale-[0.8] text-[#4CADDA]"
                 }`}
               >
                 Password
@@ -234,17 +228,10 @@ const RegisterForm = () => {
 
           {/* Create Account Button */}
           <Button
-            // type="submit"
+            type="submit"
             isLoading={isLoading}
             showCheckmark={showCheckmark}
             text="Create Account"
-            onClick={async () => {
-              const response = await axios.post(
-                "http://localhost:4000/api/auth/register"
-              );
-              console.log(response);
-            }}
-            // onClick={onCreateAccount}
           />
 
           {/* Login Link  */}
@@ -263,45 +250,6 @@ const RegisterForm = () => {
           </p>
         </div>
       </form>
-      <button
-        onClick={async () => {
-          // const response = await axiosInstance.post("/auth/register");
-          // const response = await axios.post(
-          //   "http://www.google.com/api/auth/register",
-          //   {
-          //     username: "test11",
-          //     email: "test11@gmail.com",
-          //     password: "12345678",
-          //     confirmPassword: "12345678",
-          //   }
-          // );
-          // console.log(response);
-        }}
-      >
-        Hello
-      </button>
-      <button
-        onClick={async () => {
-          const response = await axiosInstanceBackend.post("/auth/register", {
-            username: "test11",
-            email: "test11@gmail.com",
-            password: "12345678",
-            confirmPassword: "12345678",
-          });
-          // const response = await axios.post(
-          //   "http://localhost:4000/api/auth/register",
-          // {
-          //   username: "test11",
-          //   email: "test11@gmail.com",
-          //   password: "12345678",
-          //   confirmPassword: "12345678",
-          // }
-          // );
-          console.log(response);
-        }}
-      >
-        Hello
-      </button>
     </>
   );
 };

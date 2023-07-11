@@ -12,17 +12,22 @@ import { toast } from "react-hot-toast";
 import loginSchema from "@/models/loginSchema";
 import { signIn } from "next-auth/react";
 import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
+import axiosInstanceBackend from "@/axios";
+// import { useRouter } from "next/router";
 
 type LoginFormData = {
   username: string;
   password: string;
 };
 
-const RegisterForm = () => {
+const LoginForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
-  const [username, setUsername] = useState<string>("test33");
+  const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("12345678");
+
+  const router = useRouter();
 
   const {
     register,
@@ -34,22 +39,19 @@ const RegisterForm = () => {
 
   const onLogin = async (data: LoginFormData) => {
     setIsLoading(true);
+    data.username = data.username.toLowerCase();
     try {
+      const response = await axiosInstanceBackend.post("/auth/login", data);
+
       await signIn<"credentials">("credentials", {
         username: data.username,
         password: data.password,
-        // redirect: false,
-      }).then((res) => {
-        if (res?.ok) {
-          setUsername("");
-          setPassword("");
-        } else {
-          return toast.error(res?.error as string);
-        }
       });
     } catch (error) {
       if (error instanceof AxiosError) {
-        toast.error(error.response?.data?.message);
+        return toast.error(error.response?.data?.message);
+      } else if (error instanceof Error) {
+        toast.error(error.message);
       }
     } finally {
       setIsLoading(false);
@@ -59,11 +61,13 @@ const RegisterForm = () => {
   const loginWithGoogle = async () => {
     setIsLoading(true);
     try {
-      await signIn("google", { username: "example_username2" });
+      await signIn("google");
       // router.push('/')
     } catch (error) {
-      toast.error("Something went wrong");
-      // display the error
+      if (error instanceof Error) {
+        // display the error
+        toast.error(error.message);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -73,6 +77,7 @@ const RegisterForm = () => {
     return () => {
       setUsername("");
       setPassword("");
+      setIsLoading(false);
     };
   }, []);
 
@@ -234,4 +239,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

@@ -9,6 +9,7 @@ import { MongoClient } from "mongodb";
 import { Adapter } from "next-auth/adapters";
 import axiosInstanceBackend from "@/axios";
 import { GoogleProfile } from "next-auth/providers/google";
+import { usernameConstructor } from "@/lib/utils";
 
 const getGoogleCredentials = () => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -28,6 +29,10 @@ const adapter = MongoDBAdapter(clientPromise) as Adapter | undefined;
 
 const handler = NextAuth({
   adapter,
+  session: {
+    strategy: "jwt",
+  },
+  // debug: true,
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
@@ -54,7 +59,7 @@ const handler = NextAuth({
 
           if (res.status === 200) {
             // Any object returned will be saved in `user` property of the JWT
-            return res.data.user.email;
+            return res.data.user;
           } else {
             // If you return null then an error will be displayed advising the user to check their details.
             // throw new Error('Wrong email or password');
@@ -68,12 +73,18 @@ const handler = NextAuth({
       },
     }),
     GoogleProvider({
-      profile(profile: GoogleProfile) {
+      async profile(profile: GoogleProfile) {
+        const username = await usernameConstructor(profile.name.toLowerCase());
+
+        const date = new Date(Date.now()).toISOString();
+
         return {
-          username: profile.username,
+          username,
+          email: profile.email,
           id: profile.name,
           followers: [],
           following: [],
+          createdAt: date,
         };
       },
       clientId: getGoogleCredentials().clientId,
@@ -85,23 +96,15 @@ const handler = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      let newUser;
-      try {
-        newUser = await axiosInstanceBackend.get(
-          `/profile/getProfileByEmail/${user}`
-        );
-
-        const userData = newUser.data.user as UserModelResponse;
-
-        return { ...token, ...userData };
-      } catch (error) {
-        console.log(error);
-        return token;
+      if (user) {
+        return { ...token, user };
       }
+      return { ...token, user };
     },
     async session({ session, token }) {
-      console.log("PROVIDER", session);
-      session.user = token;
+      if (token && session.user) {
+        session.user.email = token.email as string;
+      }
       return session;
     },
     async redirect() {
