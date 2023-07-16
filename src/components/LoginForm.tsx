@@ -43,6 +43,9 @@ const LoginForm = () => {
     try {
       const response = await axiosInstanceBackend.post("/auth/login", data);
 
+      localStorage.setItem('usernameSet', 'yes')
+
+
       await signIn<"credentials">("credentials", {
         username: data.username,
         password: data.password,

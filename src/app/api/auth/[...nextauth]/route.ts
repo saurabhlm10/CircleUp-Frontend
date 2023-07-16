@@ -1,11 +1,9 @@
-import axiosInstance from "@/axios";
 import { AxiosError } from "axios";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "../../../../lib/mongodb";
-import { MongoClient } from "mongodb";
 import { Adapter } from "next-auth/adapters";
 import axiosInstanceBackend from "@/axios";
 import { GoogleProfile } from "next-auth/providers/google";
@@ -62,7 +60,6 @@ const handler = NextAuth({
             return res.data.user;
           } else {
             // If you return null then an error will be displayed advising the user to check their details.
-            // throw new Error('Wrong email or password');
             return null;
             // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
           }

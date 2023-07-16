@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 export async function usernameConstructor(username: string): Promise<string> {
   try {
     const constructedUsername = await axiosInstanceBackend.post(
-      "/auth/createusername",
+      "/auth/checkusername",
       { Googlename: username }
     );
 

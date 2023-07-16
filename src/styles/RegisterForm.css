@@ -1,6 +1,6 @@
 .checkmark {
     display: block;
-    stroke-width: 6;
+    strokeWidth: 6;
     stroke: #ffffff;
     stroke-miterlimit: 10;
     box-shadow: inset 0px 0px 0px #ffffff;
