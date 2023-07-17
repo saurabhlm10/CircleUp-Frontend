@@ -72,7 +72,7 @@ const RegisterForm = () => {
   return (
     <>
       <form
-        className={`h-screen flex flex-row justify-center items-center bg-cover bg-center`}
+        className={`h-screen w-screen flex flex-row justify-center items-center bg-cover bg-center`}
         style={{ backgroundImage: `url(${BG.src})` }}
         onSubmit={handleSubmit(onCreateAccount)}
       >

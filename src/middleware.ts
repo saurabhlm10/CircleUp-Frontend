@@ -13,7 +13,7 @@ export default withAuth(
     const isLoginPage = pathname.startsWith("/auth/login");
     const isRegisterPage = pathname.startsWith("/auth/register");
 
-    const sensitiveRoutes = ["/"];
+    const sensitiveRoutes = ["/", "/profile/:path*", "/createpost"];
     const isAccessingSensitiveRoute = sensitiveRoutes.some((route) =>
       pathname.startsWith(route)
     );
@@ -39,5 +39,11 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ["/", "/auth/login", "/auth/register", "/auth/setusername"],
+  matcher: [
+    "/",
+    "/auth/login",
+    "/auth/register",
+    "/auth/setusername",
+    "/profile/:path*",
+  ],
 };

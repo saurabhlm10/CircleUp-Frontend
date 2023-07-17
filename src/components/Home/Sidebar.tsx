@@ -16,7 +16,7 @@ const Sidebar = () => {
         <Button text="CREATE POST" />
       </Link>
       <div className="flex flex-col mt-8 gap-2">
-        <Link href="/u/search">
+        <Link href="# ">
           <Button2 text="Search" />
         </Link>
       </div>
