@@ -6,13 +6,14 @@ import axios, { AxiosError, AxiosHeaders, AxiosRequestConfig } from "axios";
 import { CentralizingDiv } from "@/components/CentralizingDiv";
 import Button3 from "@/components/ui/Button3";
 import axiosInstanceBackend from "@/axios";
-import useUser from "@/helpers/useUser";
+import getUser from "@/helpers/getUser";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 interface CreatePostProps {}
 
-const page: FC<CreatePostProps> = () => {
+const Page: FC<CreatePostProps> = () => {
   const session = useSession();
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -40,7 +41,6 @@ const page: FC<CreatePostProps> = () => {
   const addPost = async () => {
     setIsLoading(true);
 
-
     if (!currentImage || !loadedFileUrl) {
       setInvalidInput(true);
       setIsLoading(false);
@@ -48,7 +48,9 @@ const page: FC<CreatePostProps> = () => {
       return;
     }
     try {
-      const user = await useUser(session?.data?.user?.email!);
+      const user = (await getUser(
+        session?.data?.user?.email!
+      )) as UserModelResponse;
 
       const formData: FormData = new FormData();
       formData.append("image", currentImage!);
@@ -110,8 +112,9 @@ const page: FC<CreatePostProps> = () => {
               </p>
               {loadedFileUrl ? (
                 <div className="relative flex justify-center items-center w-[450px] h-[450px] shadow group">
-                  <img
+                  <Image
                     src={loadedFileUrl}
+                    alt="loaded file"
                     className="object-contain w-full h-full"
                   />
                   <div
@@ -199,4 +202,4 @@ const page: FC<CreatePostProps> = () => {
   );
 };
 
-export default page;
+export default Page;

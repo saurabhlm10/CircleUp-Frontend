@@ -1,13 +1,12 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FC, useEffect, useState } from "react";
+import { FC, SetStateAction, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import BG from "@/assets/BG.png";
 import "@/styles/RegisterForm.css";
 import Button from "@/components/ui/Button";
-import useUser from "@/helpers/useUser";
 import { useSession } from "next-auth/react";
 import axiosInstanceBackend from "@/axios";
 import { AxiosError } from "axios";
@@ -28,11 +27,11 @@ const usernameSchema = z.object({
     .max(20, { message: "Username Should Be At Most 20 Characters" }),
 });
 
-const page: FC<pageProps> = ({}) => {
+const Page: FC<pageProps> = ({}) => {
   const router = useRouter();
   const session = useSession();
 
-  const [username, setUsername] = useState<string>("");
+  const [username, setUsername] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
 
@@ -50,9 +49,12 @@ const page: FC<pageProps> = ({}) => {
 
     try {
       console.log(data);
-      const response = await axiosInstanceBackend.post("/profile/changeusername", {
-        username: username.toLowerCase().trim(),
-      });
+      const response = await axiosInstanceBackend.post(
+        "/profile/changeusername",
+        {
+          username: username.toLowerCase().trim(),
+        }
+      );
 
       router.push("/");
     } catch (error) {
@@ -69,22 +71,43 @@ const page: FC<pageProps> = ({}) => {
     }
   };
 
-  const getUser = async () => {
-    const response = (await useUser(
-      session?.data?.user?.email!
-    )) as UserModelResponse;
-    console.log(response);
-    reset({
-      username: response.username,
-    });
-    setUsername(response.username);
-  };
+  // const getUser = async () => {
+  //   const response = (await useUser(
+  //     session?.data?.user?.email!
+  //   )) as UserModelResponse;
+  //   console.log(response);
+  //   reset({
+  //     username: response.username,
+  //   });
+  //   setUsername(response.username);
+  // };
 
-  useEffect(() => {
-    if (session.data?.user?.email) {
-      getUser();
-    }
-  }, [session.data]);
+  // useEffect(() => {
+  //   if (session.data?.user?.email) {
+  //     setUsername(() => {
+  //       const response = useUser(session?.data?.user?.email!);
+  //       reset({
+  //         username: response?.username,
+  //       });
+  //       return response?.username as SetStateAction<string>;
+  //     });
+  //     // reset({
+  //     //   username: response.username,
+  //     // });
+  //     // getUser();
+  //   }
+  // }, [session.data, getUser]);
+
+  // useEffect(() => {
+  //   if (session.data?.user?.email) {
+  //     const response = useUser(session.data.user.email!);
+  //     const username = response?.username ?? ""; // Set a default value if response.username is null or undefined
+  //     reset({
+  //       username: username,
+  //     });
+  //     setUsername(username);
+  //   }
+  // }, [session.data, reset]);
 
   return (
     <form
@@ -154,4 +177,4 @@ bg-gradient-to-br from-white via-blue-50 to-[#e9fffc]"
   );
 };
 
-export default page;
+export default Page;

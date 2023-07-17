@@ -43,8 +43,7 @@ const LoginForm = () => {
     try {
       const response = await axiosInstanceBackend.post("/auth/login", data);
 
-      localStorage.setItem('usernameSet', 'yes')
-
+      localStorage.setItem("usernameSet", "yes");
 
       await signIn<"credentials">("credentials", {
         username: data.username,
@@ -230,7 +229,7 @@ const LoginForm = () => {
           isLoading && "pointer-events-none"
         } text-center mt-4`}
       >
-        Don't have an account? &nbsp;
+        Don&apos;t have an account? &nbsp;
         <Link
           href={isLoading || showCheckmark ? "#" : "/auth/register"}
           className="text-cyan-700"

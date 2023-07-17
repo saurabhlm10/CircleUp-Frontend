@@ -13,7 +13,7 @@ interface pageProps {
   };
 }
 
-const page: FC<pageProps> = ({ params }: { params: { username: string } }) => {
+const Page: FC<pageProps> = ({ params }: { params: { username: string } }) => {
   const [selfUser, setSelfUser] = useState<boolean>(false);
 
   const checkSelf = () => {
@@ -65,4 +65,4 @@ const page: FC<pageProps> = ({ params }: { params: { username: string } }) => {
   );
 };
 
-export default page;
+export default Page;

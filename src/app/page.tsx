@@ -1,7 +1,7 @@
 "use client";
 
 import Sidebar from "@/components/Home/Sidebar";
-import useUser from "@/helpers/useUser";
+import getUser from "@/helpers/getUser";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 // import { getServerSession } from "next-auth/next";
@@ -20,8 +20,8 @@ export default function Home() {
     following: [""],
   });
 
-  const getUser = async () => {
-    const response = (await useUser(
+  const getThisUser = async () => {
+    const response = (await getUser(
       session?.data?.user?.email!
     )) as UserModelResponse;
     setUser(response);
@@ -29,7 +29,7 @@ export default function Home() {
 
   useEffect(() => {
     if (session.data?.user?.email) {
-      getUser();
+      getThisUser();
     }
   }, [session.data]);
 
