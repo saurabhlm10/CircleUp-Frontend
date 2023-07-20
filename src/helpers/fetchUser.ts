@@ -11,13 +11,11 @@ const fetchUser = async (email: string): Promise<string> => {
     return JSON.stringify(response.data.user);
   } catch (error) {
     if (error instanceof AxiosError) {
-      console.log(error.response?.data.message);
       toast.error(error.response?.data.message);
       return error.response?.data.message;
     }
 
     if (error instanceof Error) {
-      console.log(error.message);
       toast.error(error.message);
       return error.message;
     }

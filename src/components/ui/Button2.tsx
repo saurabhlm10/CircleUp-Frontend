@@ -12,9 +12,13 @@ const Button2: FC<Button2Props> = ({
   showCheckmark,
   text,
   children,
+  ...props
 }) => {
   return (
-    <button className=" relative  h-10 w-28 rounded-lg font-medium group flex flex-row items-center justify-center ">
+    <button
+      className=" relative  h-10 w-28 rounded-lg font-medium group flex flex-row items-center justify-center "
+      {...props}
+    >
       <span
         className={`absolute inset-0 w-full h-full transition duration-200 ease-out transform translate-x-1 translate-y-1 bg-[#6B4892] group-hover:-translate-x-0 group-hover:-translate-y-0 rounded-lg `}
       ></span>

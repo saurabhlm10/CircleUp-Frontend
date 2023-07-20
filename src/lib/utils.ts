@@ -15,7 +15,6 @@ export async function usernameConstructor(username: string): Promise<string> {
 
     return constructedUsername.data.username;
   } catch (error) {
-    console.log("hello error");
     console.log(error);
     return (
       username.replace(" ", "") +

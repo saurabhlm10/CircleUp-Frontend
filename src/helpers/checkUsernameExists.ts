@@ -8,11 +8,11 @@ const checkUsernameExists = async (email: string): Promise<string> => {
     );
 
     if (response.data.username) {
-      console.log("5");
       return "username is already set";
     }
     return "username is not set";
   } catch (error) {
+    console.log(error);
     if (error instanceof AxiosError) {
       return error.response?.data.message;
     }
@@ -22,7 +22,6 @@ const checkUsernameExists = async (email: string): Promise<string> => {
     }
 
     return "";
-    console.log(error);
   }
 };
 

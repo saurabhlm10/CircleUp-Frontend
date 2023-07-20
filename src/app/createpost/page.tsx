@@ -10,11 +10,14 @@ import getUser from "@/helpers/getUser";
 import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 interface CreatePostProps {}
 
 const Page: FC<CreatePostProps> = () => {
   const session = useSession();
+  const router = useRouter()
+
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
@@ -56,6 +59,7 @@ const Page: FC<CreatePostProps> = () => {
       formData.append("image", currentImage!);
       formData.append("userId", user._id);
       formData.append("username", user.username);
+      formData.append("userEmail", user.email);
 
       const config: AxiosRequestConfig<FormData> = {
         headers: {
@@ -69,12 +73,10 @@ const Page: FC<CreatePostProps> = () => {
         config
       );
 
-      console.log(response);
-
       toast.success("Post Created Successfully");
 
       setTimeout(() => {
-        // navigate(`/u/${response.data.id}`);
+        router.push(`/post/${response.data.id}`);
       }, 1000);
 
       return deleteImage();
@@ -99,7 +101,7 @@ const Page: FC<CreatePostProps> = () => {
 
   return (
     <>
-      <div className="flex-1 grid grid-cols-12 border-2 border-red-600">
+      <div className="flex-1 grid grid-cols-12">
         <div className="col-span-10 border-2 border-yellow-400">
           <div className="flex flex-row justify-center ">
             <div className="flex flex-col pt-4 items-center">
@@ -116,6 +118,8 @@ const Page: FC<CreatePostProps> = () => {
                     src={loadedFileUrl}
                     alt="loaded file"
                     className="object-contain w-full h-full"
+                    width={450}
+                    height={450}
                   />
                   <div
                     className={` absolute top-2 right-2 flex opacity-0 cursor-pointer border-2 hover:border-[#4CADDA] border-white bg-[#58c1de] h-8 w-8 group-hover:opacity-100 flex-row justify-center items-center rounded-full transition-all duration-150 ease-in hover:bg-[#4CADDA] ${

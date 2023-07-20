@@ -23,6 +23,7 @@ type LoginFormData = {
 
 const LoginForm = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [googleLoading, setGoogleLoading] = useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("12345678");
@@ -43,8 +44,6 @@ const LoginForm = () => {
     try {
       const response = await axiosInstanceBackend.post("/auth/login", data);
 
-      localStorage.setItem("usernameSet", "yes");
-
       await signIn<"credentials">("credentials", {
         username: data.username,
         password: data.password,
@@ -61,7 +60,7 @@ const LoginForm = () => {
   };
 
   const loginWithGoogle = async () => {
-    setIsLoading(true);
+    setGoogleLoading(true);
     try {
       await signIn("google");
       // router.push('/')
@@ -71,7 +70,7 @@ const LoginForm = () => {
         toast.error(error.message);
       }
     } finally {
-      setIsLoading(false);
+      setGoogleLoading(false);
     }
   };
 
@@ -80,6 +79,7 @@ const LoginForm = () => {
       setUsername("");
       setPassword("");
       setIsLoading(false);
+      setGoogleLoading(false);
     };
   }, []);
 
@@ -115,7 +115,7 @@ const LoginForm = () => {
                 id="usernameFormControlInput"
                 placeholder="Username"
                 value={username}
-                disabled={isLoading}
+                disabled={isLoading || googleLoading}
                 onChange={(e) => {
                   setUsername(e.target.value.trim());
                 }}
@@ -148,7 +148,7 @@ const LoginForm = () => {
                 id="passwordFormControlInput"
                 type="password"
                 placeholder="Password"
-                disabled={isLoading}
+                disabled={isLoading || googleLoading}
                 onChange={(e) => {
                   setPassword(e.target.value);
                 }}
@@ -185,12 +185,12 @@ const LoginForm = () => {
       </form>
 
       <VarButton
-        isLoading={isLoading}
+        isLoading={googleLoading}
         type="button"
         className=" w-1/3 mt-10 h-12 text-base"
         onClick={loginWithGoogle}
       >
-        {isLoading ? null : (
+        {googleLoading ? null : (
           <svg
             className="mr-2 h-6 w-6"
             aria-hidden="true"
@@ -226,12 +226,12 @@ const LoginForm = () => {
       {/* Register Link  */}
       <p
         className={`font-display w-1/3 ${
-          isLoading && "pointer-events-none"
+          (isLoading || googleLoading) && "pointer-events-none"
         } text-center mt-4`}
       >
         Don&apos;t have an account? &nbsp;
         <Link
-          href={isLoading || showCheckmark ? "#" : "/auth/register"}
+          href={isLoading || googleLoading || showCheckmark ? "#" : "/auth/register"}
           className="text-cyan-700"
         >
           Register here.

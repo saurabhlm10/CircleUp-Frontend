@@ -1,5 +1,6 @@
 "use client";
 
+import Posts from "@/components/Home/Posts";
 import Sidebar from "@/components/Home/Sidebar";
 import getUser from "@/helpers/getUser";
 import { signOut, useSession } from "next-auth/react";
@@ -24,7 +25,6 @@ export default function Home() {
     const response = (await getUser(
       session?.data?.user?.email!
     )) as UserModelResponse;
-    console.log(response)
     setUser(response);
   };
 
@@ -35,17 +35,24 @@ export default function Home() {
   }, [session.data]);
 
   return (
-    <>
+    <div className="flex">
       <Sidebar />
 
-      <div className="flex-1 grid grid-cols-12 h-screen border-2 border-red-600">
-        <div className="col-span-11">Hello</div>
-        <div className="col-span-1 border-2 border-black flex flex-col items-center pt-4">
+      <div className="flex-1 grid grid-cols-12 h-screen overflow-hidden">
+        <div className="col-span-11">
+          <div className="flex flex-row justify-center w-full ">
+            <div className="pt-4 w-full flex flex-row justify-center">
+              <Posts className="font-display flex flex-col gap-12 h-screen overflow-y-scroll no-scrollbar w-full items-center"   />
+            </div>
+          </div>
+          {/* <Posts />s */}
+        </div>
+        <div className="col-span-1 flex flex-col items-center pt-4">
           <Link
             href={`/profile/${user?.username}`}
             className=" relative  inline-flex rounded-full group overflow-hidden bg-[#4CADDA] text-purple-600"
           >
-            <span className=" absolute inline-flex top-0 left-0  w-full h-0 mb-0 transition-all duration-300 ease-out transform translate-y-0 bg-purple-600 group-hover:h-full opacity-90 border-black"></span>
+            <span className=" absolute inline-flex top-0 left-0  w-full h-0 mb-0 transition-all duration-300 ease-out transform translate-y-0 bg-purple-600 group-hover:h-full opacity-90 border-"></span>
             <span className="relative inline-flex group-hover:text-white">
               <span className="inline-flex material-symbols-outlined text-white  text-6xl ">
                 <svg
@@ -67,6 +74,6 @@ export default function Home() {
           </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 }

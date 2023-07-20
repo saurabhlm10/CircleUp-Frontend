@@ -1,0 +1,8 @@
+.box {
+  box-shadow: inset -5px -5px 3px -5px rgba(0, 0, 0, 0.3);
+}
+
+#inputTextArea {
+  transition-property: height;
+  transition-duration: 300ms;
+}

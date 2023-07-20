@@ -48,7 +48,6 @@ const Page: FC<pageProps> = ({}) => {
     setIsLoading(true);
 
     try {
-      console.log(data);
       const response = await axiosInstanceBackend.post(
         "/profile/changeusername",
         {

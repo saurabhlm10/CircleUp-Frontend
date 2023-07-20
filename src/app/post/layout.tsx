@@ -1,3 +1,4 @@
+import { CentralizingDiv } from "@/components/CentralizingDiv";
 import Sidebar from "@/components/Home/Sidebar";
 
 export const metadata = {
@@ -12,8 +13,8 @@ export default function RootLayout({
 }) {
   return (
     <main className="flex w-full">
-        <Sidebar />
-        {children}
+      <Sidebar />
+      {children}
     </main>
   );
 }
