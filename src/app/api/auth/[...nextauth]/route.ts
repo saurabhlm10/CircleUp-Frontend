@@ -8,6 +8,8 @@ import { Adapter } from "next-auth/adapters";
 import axiosInstanceBackend from "@/axios";
 import { GoogleProfile } from "next-auth/providers/google";
 import { usernameConstructor } from "@/lib/utils";
+import JWT from "jsonwebtoken";
+import toast from "react-hot-toast";
 
 const getGoogleCredentials = () => {
   const clientId = process.env.GOOGLE_CLIENT_ID;
@@ -75,6 +77,24 @@ const handler = NextAuth({
 
         const date = new Date(Date.now()).toISOString();
 
+        const token = JWT.sign(profile, process.env.JWT_SECRET!);
+
+        try {
+          await axiosInstanceBackend.get("/auth/googlelogin", {
+            headers: {
+              token,
+            },
+          });
+        } catch (error) {
+          console.log(error);
+          if (error instanceof AxiosError) {
+            toast.error(error.response?.data.message);
+          }
+          if (error instanceof Error) {
+            toast.error(error.message);
+          }
+        }
+
         return {
           username,
           email: profile.email,
@@ -93,6 +113,11 @@ const handler = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
+      // await axiosInstanceBackend.post(
+      //   "/auth/login",
+      //   credentials
+      // );
+
       if (user) {
         return { ...token, user };
       }
