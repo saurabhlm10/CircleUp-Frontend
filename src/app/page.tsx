@@ -5,10 +5,17 @@ import Sidebar from "@/components/Home/Sidebar";
 import getUser from "@/helpers/getUser";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { getToken } from "next-auth/jwt";
+
 // import { getServerSession } from "next-auth/next";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import JWT, { JsonWebTokenError } from "jsonwebtoken";
+import axiosInstanceBackend from "@/axios";
+import { AxiosError } from "axios";
+import toast from "react-hot-toast";
+import mixStringsComplex from "@/helpers/mixStrings";
 
 export default function Home() {
   const session = useSession();
@@ -28,8 +35,47 @@ export default function Home() {
     setUser(response);
   };
 
+  const setToken = async (email: string) => {
+    try {
+      // const jwttoken = JWT.sign(
+      //   session.data?.user!,
+      //   process.env.NEXT_PUBLIC_JWT_SECRET!
+      // );
+
+      // console.log(jwttoken);
+
+      // const token = mixStringsComplex(
+      //   email,
+      //   process.env.NEXT_PUBLIC_JWT_SECRET!,
+      //   "1"
+      // );
+
+      const response = await axiosInstanceBackend.get(
+        "/auth/googlelogin",
+        {
+          headers: {
+            token: email,
+          },
+        }
+      );
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+      }
+      if (error instanceof JsonWebTokenError) {
+        toast.error(error.message);
+      }
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  };
+
   useEffect(() => {
     if (session.data?.user?.email) {
+      setToken(session.data?.user?.email);
       getThisUser();
     }
   }, [session.data]);
@@ -42,7 +88,7 @@ export default function Home() {
         <div className="col-span-11">
           <div className="flex flex-row justify-center w-full ">
             <div className="pt-4 w-full flex flex-row justify-center">
-              <Posts className="font-display flex flex-col gap-12 h-screen overflow-y-scroll no-scrollbar w-full items-center"   />
+              <Posts className="font-display flex flex-col gap-12 h-screen overflow-y-scroll no-scrollbar w-full items-center" />
             </div>
           </div>
           {/* <Posts />s */}

@@ -10,11 +10,11 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 import loginSchema from "@/models/loginSchema";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import axiosInstanceBackend from "@/axios";
-// import { useRouter } from "next/router";
+import JWT from "jsonwebtoken";
 
 type LoginFormData = {
   username: string;
@@ -22,6 +22,7 @@ type LoginFormData = {
 };
 
 const LoginForm = () => {
+  const session = useSession();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [googleLoading, setGoogleLoading] = useState<boolean>(false);
   const [showCheckmark, setShowCheckmark] = useState<boolean>(false);
@@ -62,7 +63,38 @@ const LoginForm = () => {
   const loginWithGoogle = async () => {
     setGoogleLoading(true);
     try {
-      await signIn("google");
+      await signIn("google", {
+        // redirect: false,
+        // callbackUrl: '/'
+      });
+
+      // console.log(session.data?.user?.email);
+      // console.log(process.env.JWT_SECRET);
+
+      // setInterval(() => {
+      //   if(session.data?.user?.email) {
+      //     console.log(session.data?.user?.email)
+      //     clearInterval(this)
+      //   }
+      // }, 100)
+
+
+      // const jwttoken = JWT.sign(
+      //   session.data?.user?.email!,
+      //   process.env.NEXT_PUBLIC_JWT_SECRET!
+      // );
+
+      // console.log(jwttoken)
+
+      // const response = await axiosInstanceBackend.get("/auth/googlelogin", {
+      //   headers: {
+      //     token: jwttoken,
+      //   },
+      // });
+
+      // console.log(response.data)
+
+
       // router.push('/')
     } catch (error) {
       if (error instanceof Error) {
@@ -231,7 +263,9 @@ const LoginForm = () => {
       >
         Don&apos;t have an account? &nbsp;
         <Link
-          href={isLoading || googleLoading || showCheckmark ? "#" : "/auth/register"}
+          href={
+            isLoading || googleLoading || showCheckmark ? "#" : "/auth/register"
+          }
           className="text-cyan-700"
         >
           Register here.
