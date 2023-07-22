@@ -74,6 +74,7 @@ export default function Home() {
   };
 
   useEffect(() => {
+    console.log(session.data)
     if (session.data?.user?.email) {
       setToken(session.data?.user?.email);
       getThisUser();
