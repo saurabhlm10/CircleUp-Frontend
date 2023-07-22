@@ -17,7 +17,10 @@ export async function usernameConstructor(username: string): Promise<string> {
   } catch (error) {
     console.log(error);
     return (
-      username.replace(" ", "") +
+      username.split("").filter((element) => {
+        console.log(element);
+        return element !== " ";
+      }) +
       String(Math.random() * 100000)
         .slice(0, 6)
         .replace(".", "")
