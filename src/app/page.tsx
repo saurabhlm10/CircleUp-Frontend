@@ -70,6 +70,7 @@ export default function Home() {
       if (error instanceof Error) {
         toast.error(error.message);
       }
+      await signOut()
     }
   };
 

@@ -1,4 +1,6 @@
+import { AxiosError } from "axios";
 import fetchUser from "./fetchUser";
+import toast from "react-hot-toast";
 
 const getUser = async (email: string): Promise<UserModelResponse> => {
   let user: UserModelResponse = {
@@ -10,10 +12,19 @@ const getUser = async (email: string): Promise<UserModelResponse> => {
   };
 
   if (!email) return user;
-  if (email && !localStorage.getItem("user")) {
-    const response = await fetchUser(email);
-    console.log(response);
-    localStorage.setItem("user", response);
+  if (email && !localStorage.getItem("user") || localStorage.getItem('user') === 'Token Missing') {
+    try {
+      const response = await fetchUser(email);
+      console.log(response);
+      localStorage.setItem("user", response);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+      }
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
   }
   user = JSON.parse(localStorage.getItem("user")!) as UserModelResponse;
 
